@@ -1,2 +1,2 @@
 # kat-myft-syncher
-Lambda based synchronisation of myFT for KATs
+A lambda based sphincter to synchronise myFT data based on results from the next-myft-jobs

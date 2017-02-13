@@ -1,0 +1,52 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+# Parameters:
+#   Environment:
+#     Type: String
+#     AllowedValues:
+#       - production
+#       - test
+#       - dev
+#     Default: production
+# Description: >-
+#   A lambda based sphincter to synchronise myFT data based on results from the
+#   next-myft-jobs
+Resources:
+#   b2bKATmyFTSyncherProduction:
+#     Type: 'AWS::Serverless::Function'
+#     Properties:
+#       FunctionName: arn:aws:lambda:eu-west-1:027104099916:function:b2b-kat-myft-syncher-production
+#       Handler: index.handler
+#       Runtime: nodejs4.3
+#       CodeUri: s3://artefacts.b2b-kat-myft-syncher-vbhdhjckm0xg/code.zip
+#       Description: >-
+#         A lambda based sphincter to synchronise myFT data based on results from
+#         the next-myft-jobs
+#       MemorySize: 512
+#       Timeout: 300
+#       Role: arn:aws:iam::027104099916:role/FTApplicationRoleFor_b2b-kat-myft-syncher
+
+  b2bKATmyFTSyncherPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: arn:aws:lambda:eu-west-1:027104099916:function:b2b-kat-myft-syncher-production
+      Principal: s3.amazonaws.com
+      SourceAccount: 416899846818
+      SourceArn: arn:aws:s3:::prod.ft.dw.source
+
+  b2bKATmyFTSyncherS3Notification:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: prod.ft.dw.source
+      NotificationConfiguration:
+        LambdaConfigurations:
+          Event: String
+          Filter:
+            S3Key:
+              Rules:
+                -
+                  Name: prefix
+                  Value: data/kat
+          Function: arn:aws:lambda:eu-west-1:027104099916:function:b2b-kat-myft-syncher-production
