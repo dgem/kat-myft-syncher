@@ -2,11 +2,11 @@
 
 const λ = require('@financial-times/n-lambda');
 const log = λ.logger;
-const processor = require('./lib/processor');
+const process = require('./lib/eventProcessor');
 const errors = require('./lib/errors');
 
 exports.handler = λ(function(event) {
-  return processor.processEvent(event)
+  return process(event)
 	.then(()=>{
 		log.debug({operation: 'handler', status: 'eventProcessed'});
 	})
