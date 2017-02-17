@@ -30,6 +30,7 @@
     "node-lambda": "^0.8.12"
   },
   "dependencies": {
-    "@financial-times/n-lambda": "^1.2.1"
+    "@financial-times/n-lambda": "^1.2.1",
+    "aws-sdk": "^2.15.0"
   }
 }
