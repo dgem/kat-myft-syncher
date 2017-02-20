@@ -20,10 +20,10 @@ exports.handler = λ(function(event) {
 		}
   })
 	.then((result)=>{
-		if (result instanceof Error) {
+		if (result instanceof errors.Fatal) {
 			return {
 				statusCode: 500,
-				body: result.toString
+				body: JSON.stringify(result)
 			};
 		} else {
 			return Promise.resolve({
