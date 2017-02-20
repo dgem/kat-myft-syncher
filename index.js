@@ -18,5 +18,18 @@ exports.handler = λ(function(event) {
 			log.error({operation: 'handler', error});
 			return Promise.resolve(error);
 		}
-  });
+  })
+	.then((result)=>{
+		if (result instanceof Error) {
+			return {
+				statusCode: 500,
+				body: result.toString
+			};
+		} else {
+			return Promise.resolve({
+				statusCode: 200,
+				body: JSON.stringify(result)
+			});
+		}
+	});
 });

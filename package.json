@@ -26,11 +26,13 @@
   },
   "homepage": "https://github.com/Financial-Times/kat-myft-syncher#readme",
   "devDependencies": {
+    "fetch-mock": "^5.9.4",
     "mocha": "^3.2.0",
     "node-lambda": "^0.8.12"
   },
   "dependencies": {
     "@financial-times/n-lambda": "^1.2.1",
-    "aws-sdk": "^2.15.0"
+    "aws-sdk": "^2.15.0",
+    "csv": "^1.1.1"
   }
 }
