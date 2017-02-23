@@ -26,10 +26,10 @@ exports.handler = λ(function(event) {
 				body: JSON.stringify(result)
 			};
 		} else {
-			return Promise.resolve({
+			return {
 				statusCode: 200,
-				body: JSON.stringify(result)
-			});
+				body: JSON.stringify(result instanceof errors.Warning?{result:`${result.name}: ${result.message}`}:result)
+			};
 		}
 	});
 });
