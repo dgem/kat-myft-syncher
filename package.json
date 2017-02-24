@@ -36,6 +36,7 @@
     "aws-sdk": "^2.15.0",
     "csv": "^1.1.1",
     "isomorphic-fetch": "^2.2.1",
-    "kat-client-proxies": "github:financial-times/kat-client-proxies"
+    "kat-client-proxies": "github:financial-times/kat-client-proxies",
+    "uuid": "^3.0.1"
   }
 }
