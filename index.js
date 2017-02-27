@@ -7,9 +7,6 @@ const errors = require('./lib/errors');
 
 exports.handler = λ(function(event) {
   return process(event)
-	.then(()=>{
-		log.debug({operation: 'handler', status: 'eventProcessed'});
-	})
   .catch(function(error) {
     if (error instanceof errors.Fatal) {
       λ.raven.captureError(error);
@@ -18,18 +15,8 @@ exports.handler = λ(function(event) {
 			log.error({operation: 'handler', error});
 			return Promise.resolve(error);
 		}
-  })
-	.then((result)=>{
-		if (result instanceof errors.Fatal) {
-			return {
-				statusCode: 500,
-				body: JSON.stringify(result)
-			};
-		} else {
-			return {
-				statusCode: 200,
-				body: JSON.stringify(result)
-			};
-		}
+  }).then(result=>{
+		log.debug({operation: 'handler', status: 'eventProcessed', result:JSON.stringify(result)});
+		return result;
 	});
 });
