@@ -5,7 +5,7 @@ const errors = require('../lib/errors');
 const gatewayMsg = require('./fixtures/apiGatewayMessage');
 const uuid = require('uuid');
 
-describe('Basic apiGatewayMessage tests', function () {
+describe('apiGatewayMessage fixture generator tests', function () {
 
 	it('Should create a default structure', function () {
 		let msg = gatewayMsg();

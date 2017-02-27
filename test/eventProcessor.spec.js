@@ -5,7 +5,7 @@ const errors = require('../lib/errors');
 const processor = require('../lib/eventProcessor');
 const apiGatewayMessage = require('./fixtures/apiGatewayMessage');
 
-describe('Basic Ping event processor tests', function () {
+describe('Ping event processor tests', function () {
 
 	it('Should be sucessful', function (done) {
 		let event = {isPingTest:true};

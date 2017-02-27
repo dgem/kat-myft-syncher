@@ -28,7 +28,7 @@ exports.handler = λ(function(event) {
 		} else {
 			return {
 				statusCode: 200,
-				body: JSON.stringify(result instanceof errors.Warning?{result:`${result.name}: ${result.message}`}:result)
+				body: JSON.stringify(result)
 			};
 		}
 	});
