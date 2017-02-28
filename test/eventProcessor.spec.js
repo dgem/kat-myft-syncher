@@ -47,6 +47,7 @@ describe('Ping event processor tests', function () {
 });
 
 describe('Basic handling of events', function (done) {
+
 	it('Should be able to handle a API GW request', function (done) {
 		let event = apiGatewayMessage({body:{messages:[{messageType:'UserCreated'}]}});
 		processor(event)
@@ -57,4 +58,6 @@ describe('Basic handling of events', function (done) {
 			done(error);
 		});
 	});
+
+
 });

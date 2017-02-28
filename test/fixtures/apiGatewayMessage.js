@@ -1,5 +1,6 @@
 'use strict';
 const uuid = require('uuid');
+const log = require('@financial-times/n-lambda').logger;
 
 function message(msg) {
 	msg = msg === undefined? {body:{messages:[]}}:msg;
@@ -156,6 +157,7 @@ function ftMessageBody(msgType, msgBody) {
 			break;
 		default:
 	}
+	log.silly({operation:'ftMessageBody', ftMessageBody:JSON.stringify(body)});
 	return body;
 }
 
