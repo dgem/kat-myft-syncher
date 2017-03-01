@@ -31,17 +31,20 @@ describe('Memerbship Topic Messages', function () {
 			let event = apiGatewayMessage({body:{messages:[{messageType:'UserCreated'}]}});
 			processor(event)
 			.then(result => {
-				// console.log(JSON.stringify(result));
+				console.log(JSON.stringify(result));
 				expect(result).to.not.be.undefined;
 				expect(result).to.not.be.null;
 				expect(result.statusCode).to.equal(200);
 				expect(result.body.user).to.not.be.undefined;
+				expect(result.body.user.uuid).to.be.a('string');
+				expect(result.body.user.status).to.not.equal('synchronised');
 				done();
 			})
 			.catch(error=>{
 				done(error);
 			});
 		});
+
 		it ('should handle multiple default UserCreated message', function(done){
 			let messages = [{messageType:'UserCreated'}, {messageType:'UserCreated'}, {messageType:'UserCreated'}];
 			let event = apiGatewayMessage({body:{messages}});
@@ -56,6 +59,8 @@ describe('Memerbship Topic Messages', function () {
 				result.body.forEach(subResult=>{
 					expect(subResult.statusCode).to.equal(200);
 					expect(subResult.body).to.have.ownProperty('user');
+					expect(subResult.body.user.uuid).to.be.a('string');
+					expect(subResult.body.user.status).to.not.equal('synchronised');
 				});
 				done();
 			})
@@ -70,7 +75,7 @@ describe('Memerbship Topic Messages', function () {
 			let event = apiGatewayMessage({body:{messages:[{messageType:'LicenceSeatAllocated'}]}});
 			processor(event)
 			.then(result => {
-				console.log(JSON.stringify(result));
+				// console.log(JSON.stringify(result));
 				expect(result).to.not.be.undefined;
 				expect(result).to.not.be.null;
 				expect(result.statusCode).to.equal(200);

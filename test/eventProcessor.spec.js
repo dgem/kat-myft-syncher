@@ -48,8 +48,8 @@ describe('Ping event processor tests', function () {
 
 describe('Basic handling of events', function (done) {
 
-	it('Should be able to handle a API GW request', function (done) {
-		let event = apiGatewayMessage({body:{messages:[{messageType:'UserCreated'}]}});
+	it('Should be able to handle a API GW g2g request', function (done) {
+		let event = apiGatewayMessage({resourcePath:'/__gtg'});
 		processor(event)
 		.then(result => {
 			done();

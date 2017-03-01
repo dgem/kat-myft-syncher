@@ -3,46 +3,53 @@ const uuid = require('uuid');
 const log = require('@financial-times/n-lambda').logger;
 
 function message(msg) {
-	msg = msg === undefined? {body:{messages:[]}}:msg;
-	msg.body = msg.body === undefined? {messages:[]}:msg.body;
-	return {
-	  resource: msg.resource || '/membership',
-	  path: msg.path || '/membership',
-	  httpMethod: msg.httpMethod || "POST",
-	  headers: headers(msg.headers),
+	msg = msg || {};
+	msg.body = msg.body || {messages:[]};
+	let res = {
+	  headers: headers(msg.headers||{}),
 	  queryStringParameters: msg.queryStringParameters || null,
 	  pathParameters: msg.pathParameters || null,
 	  stageVariables: msg.stageVariables || null,
 	  requestContext: requestContext(msg.requestContext),
-		"resourcePath": msg.resourcePath || msg.path || msg.resource || '/membership',
 		"apiId": msg.apiId || "606os4gyyc",
-	  "body": {
-	    "topic": msg.body.topic || "membership_users_v1",
-	    "messages": bodyMessages(msg.body.messages),
-	    "isBase64Encoded": msg.isBase64Encoded || false
-	  }
 	};
+	if (msg.resourcePath === '/__gtg') {
+		res.resourcePath = msg.resourcePath;
+		res.resource = msg.resource || '/gtg';
+	  res.path = msg.path || '/__gtg';
+	  res.httpMethod= msg.httpMethod || "GET";
+	} else {
+		res.resource= msg.resource || '/membership';
+	  res.path= msg.path || '/membership';
+		res.httpMethod= msg.httpMethod || "POST";
+		res.resourcePath= msg.resourcePath || msg.path || msg.resource || '/membership';
+		res.body = msg.body;
+		res.body.topic = msg.body.topic || "membership_users_v1";
+	  res.body.isBase64Encoded = msg.isBase64Encoded || false;
+		res.body.messages = bodyMessages(msg.body.messages);
+	}
+	return res;
 }
 
-function headers(headers) {
-	headers = Object.apply({}, headers);
-	return {
+function headers(msgHeaders) {
+	let defaultHeaders = {
 	    "Accept-Encoding": "gzip,deflate",
 	    "Content-Encoding": "gzip",
-	    "Content-Type": headers.contentType || "application/json;charset=utf-8",
-	    Host: headers.host || "606os4gyyc.execute-api.eu-west-1.amazonaws.com",
-	    "User-Agent": headers.userAgent || "KafkaHttpBridge (membership_users_v1-b2b-kat-myft-syncher)",
-	    "X-Amzn-Trace-Id": headers.xAmznTraceId || "Root=1-58a936c3-225e33571e04623c6e3db9fb",
-	    "X-Api-Key": headers.apiKey || uuid(),
-	    "X-Forwarded-For": headers.xForwardedFor || "54.194.189.228, 216.137.56.93",
-	    "X-Forwarded-Port": headers.xForwardedPort || "443",
-	    "X-Forwarded-Proto": headers.xForwardedProto || "https",
-	    "X-Request-Id": headers.xRequestId || uuid()
+	    "Content-Type": "application/json;charset=utf-8",
+	    "Host": "606os4gyyc.execute-api.eu-west-1.amazonaws.com",
+	    "User-Agent": "KafkaHttpBridge (membership_users_v1-b2b-kat-myft-syncher)",
+	    "X-Amzn-Trace-Id": "Root=1-58a936c3-225e33571e04623c6e3db9fb",
+	    "X-Api-Key": uuid(),
+	    "X-Forwarded-For": "54.194.189.228, 216.137.56.93",
+	    "X-Forwarded-Port": "443",
+	    "X-Forwarded-Proto": "https",
+	    "X-Request-Id": uuid()
 	};
+	return Object.apply(defaultHeaders, msgHeaders);
 }
 
 function requestContext(context) {
-	context = context===undefined? {}: context;
+	context = Object.apply({}, context);
 	return {
 		"accountId": context.accountId || "123456789",
 		"resourceId": context.resourceId ||"w7lnsd",
@@ -53,7 +60,7 @@ function requestContext(context) {
 }
 
 function identity(data) {
-	data = data===undefined? {}: data;
+	data = Object.apply({}, data);
 	return {
 		"cognitoIdentityPoolId": null,
 		"accountId": null,
@@ -69,6 +76,7 @@ function identity(data) {
 		"user": data.user||null
 	};
 }
+
 function bodyMessages(messages) {
 	return messages.map((ftMsg)=>{
 		ftMsg = ftMsg===undefined? {}: ftMsg;

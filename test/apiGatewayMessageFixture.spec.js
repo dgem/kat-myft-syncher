@@ -9,7 +9,7 @@ describe('apiGatewayMessage fixture generator tests', function () {
 
 	it('Should create a default structure', function () {
 		let msg = gatewayMsg();
-		// console.log(JSON.stringify(msg));
+		console.log(JSON.stringify(msg));
 		expect(msg).to.not.be.null;
 		expect(msg.resource).to.equal('/membership');
 		expect(msg.path).to.equal('/membership');
@@ -21,7 +21,7 @@ describe('apiGatewayMessage fixture generator tests', function () {
 	it('Should create a default LicenceSeatAllocated message', function () {
 		let message = {body:{messages:[{messageType:'LicenceSeatAllocated'}]}};
 		let msg = gatewayMsg(message);
-		// console.log(JSON.stringify(msg));
+		console.log(JSON.stringify(msg));
 		expect(msg).to.not.be.null;
 		expect(msg.body).to.not.be.null;
 		expect(msg.body.messages).to.have.lengthOf(1);
@@ -34,7 +34,7 @@ describe('apiGatewayMessage fixture generator tests', function () {
 	it('Should create a default UserCreated message', function () {
 		let message = {body:{messages:[{messageType:'UserCreated'}]}};
 		let msg = gatewayMsg(message);
-		// console.log(JSON.stringify(msg));
+		console.log(JSON.stringify(msg));
 		expect(msg).to.not.be.null;
 		expect(msg.body).to.not.be.null;
 		expect(msg.body.messages).to.have.lengthOf(1);
@@ -48,7 +48,7 @@ describe('apiGatewayMessage fixture generator tests', function () {
 		let title='Mr';
 		let message = {body:{messages:[{messageType:'UserCreated', body:{user:{id:userId, title, firstName}}}]}};
 		let msg = gatewayMsg(message);
-		// console.log(JSON.stringify(msg));
+		console.log(JSON.stringify(msg));
 		expect(msg).to.not.be.null;
 		expect(msg.body).to.not.be.null;
 		expect(msg.body.messages).to.have.lengthOf(1);
