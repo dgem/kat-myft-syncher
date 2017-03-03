@@ -94,7 +94,7 @@ function ftMessage(ftMsg){
 		originHost: ftMsg.originHost || "ip-10-170-46-15",
 		contentType: ftMsg.contentType || "application/json",
 		"messageId": ftMsg.Id || uuid(),
-		"body": ftMessageBody(ftMsg.messageType, ftMsg.body),
+		"body": ftMessageBody(ftMsg.messageType, ftMsg),
 		"customHeaders": {
 			"FT-Transaction-Id": ftMsg.ftTransactionId || uuid()
 		},

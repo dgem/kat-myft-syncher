@@ -6,11 +6,13 @@ const errors = require('../lib/errors');
 const processor = require('../lib/eventProcessor');
 const apiGatewayMessage = require('./fixtures/apiGatewayMessage');
 const uuid = require('uuid');
+const testData = require('./fixtures/testData');
+const myFT = require('kat-client-proxies').myFTClient;
 
 // const expectOwnProperties = require('./expectExtensions').expectOwnProperties;
 
 describe('Memerbship Topic Messages', function () {
-
+	this.timeout(10000);
 	// const mockAPI = env.USE_MOCK_API;
 	//
 	// before(function() {
@@ -27,11 +29,11 @@ describe('Memerbship Topic Messages', function () {
   // });
 
 	describe('User Created', function () {
-		it ('should handle a default UserCreated message', function(done){
+		it ('should not synchronised a default UserCreated message, saying it was not synchronised', function(done){
 			let event = apiGatewayMessage({body:{messages:[{messageType:'UserCreated'}]}});
 			processor(event)
 			.then(result => {
-				console.log(JSON.stringify(result));
+				// console.log(JSON.stringify(result));
 				expect(result).to.not.be.undefined;
 				expect(result).to.not.be.null;
 				expect(result.statusCode).to.equal(200);
@@ -45,7 +47,7 @@ describe('Memerbship Topic Messages', function () {
 			});
 		});
 
-		it ('should handle multiple default UserCreated message', function(done){
+		it ('should not synchronised a multiple default UserCreated message, saying it was not synchronised', function(done){
 			let messages = [{messageType:'UserCreated'}, {messageType:'UserCreated'}, {messageType:'UserCreated'}];
 			let event = apiGatewayMessage({body:{messages}});
 			processor(event)
@@ -71,7 +73,7 @@ describe('Memerbship Topic Messages', function () {
 	});
 
 	describe('licenceSeatAllocated', function () {
-		it ('should handle a default licenseSeatAllocated message, saying it was not synchronised', function(done){
+		it ('should not synchronised a default licenseSeatAllocated message, saying it was not synchronised', function(done){
 			let event = apiGatewayMessage({body:{messages:[{messageType:'LicenceSeatAllocated'}]}});
 			processor(event)
 			.then(result => {
@@ -87,5 +89,69 @@ describe('Memerbship Topic Messages', function () {
 				done(error);
 			});
 		});
+
+		it ('should ignore a licenseSeatAllocated message for a valid user already in sync on a licence', function(done){
+			let body= {body:{messages:[{
+				messageType:'LicenceSeatAllocated',
+				licenceSeatAllocated: {
+					licenceId: testData.validLicenceId,
+					userId: testData.validUserId
+				}
+			}]}};
+			let event = apiGatewayMessage(body);
+			// console.log(JSON.stringify(event));
+			processor(event)
+			.then(result => {
+				console.log(JSON.stringify(result));
+				expect(result).to.not.be.undefined;
+				expect(result).to.not.be.null;
+				expect(result.statusCode).to.equal(200);
+				expect(result.body.user.uuid).to.be.a('string');
+				expect(result.body.user.uuid).to.be.equal(testData.validUserId);
+				expect(result.body.user.status).to.equal('synchronisationIgnored');
+				done();
+			})
+			.catch(error=>{
+				done(error);
+			});
+		});
+
+		it ('should synchonise a licenseSeatAllocated message for a valid user who is out of sync on a licence', function(done){
+			// Add a concept to all users group follows on licence (default is Keith Inc)
+			myFT.removeConceptsFollowedByUser(testData.validUserId, testData.validConceptId)
+			.then(res=>res)
+			.catch((err)=>console.log(`ignoring error ${err.toString()}`))
+			.then(()=>{
+				myFT.addConceptsFollowedByGroup(testData.validLicenceId, testData.validConceptId)
+				.then(()=>{
+					let body= {body:{messages:[{
+						messageType:'LicenceSeatAllocated',
+						licenceSeatAllocated: {
+							licenceId: testData.validLicenceId,
+							userId: testData.validUserId
+						}
+					}]}};
+					let event = apiGatewayMessage(body);
+					// console.log(JSON.stringify(event));
+					processor(event)
+					.then(result => {
+						console.log(JSON.stringify(result));
+						expect(result).to.not.be.undefined;
+						expect(result).to.not.be.null;
+						expect(result.statusCode).to.equal(200);
+						expect(result.body.user.uuid).to.be.a('string');
+						expect(result.body.user.uuid).to.be.equal(testData.validUserId);
+						expect(result.body.user.status).to.equal('synchronisationCompleted');
+						done();
+					});
+				})
+				.catch(error=>{
+					done(error);
+				});
+			});
+		});
+
+
 	});
+
 });
